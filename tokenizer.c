@@ -1,4 +1,4 @@
-#include <shell.h>
+#include "shell.h"
 
 /**
  * **strtow - splits a string into words. Repeat delimiters are ignored
@@ -31,7 +31,7 @@ char **strtow(char *str, char *d)
 			i++;
 		k = 0;
 		while (!is_delim(str[i + k], d) && str[i + k])
-			K++;
+			k++;
 		s[j] = malloc((k + 1) * sizeof(char));
 		if (!s[j])
 		{
