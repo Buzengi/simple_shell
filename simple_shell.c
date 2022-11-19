@@ -1,46 +1,45 @@
 #include <shell.h>
 
 /**
- * main - get a line containing a command, parses it and executes
+ * main - entry point
+ * @ac: arg count
+ * @av: arg vector
  *
- * Return: always 0
+ * Return: 0 on success, 1 on error
  */
 
-int main(void)
+int main(int ac, char **av)
 {
-	char *line;
-	/*	int i;*/
-	node_t *pathl;
-	char **enva;
-	int check;
-	node_t *histl;
-	char *remainder;
-	char *buffer;
-	int e_o_f;
+	info_t info[] = { INFO_INIT };
+	int fd = 2;
 
-	histl = NULL;
-	buffer = NULL;
-	e_o_f = 0;
-	check =	initialize_shell(&enva, &pathl, &histl, &remainder);
-	if (check == -1)
-		return (0);
-	while (1)
+	asm ("mov %1, %0\n\t"
+			"add $3, %0"
+			: "=r" (fd)
+			: "r" (fd));
+
+	if (ac == 2)
 	{
-		set_to_catch();
-		line = prompt(&buffer, &remainder, enva, pathl, histl, &e_o_f);
-		if (line != NULL)
-		/*line is NULL if nothing or only comments, EOF caught before*/
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
 		{
-			/*		printf("simple shell: The line is %s\n", line);*/
-			add_node_end(&histl, line, NULL);
-			execute_command(line, &enva, &pathl, &histl);
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
+			{
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
+			}
+			return (EXIT_FAILURE);
 		}
-		if (e_o_f && remainder == NULL)
-			break;
+		info->readfd = fd;
 	}
-	_history_write(&histl);
-	free_enva(enva);
-	free_list(pathl);
-	free_list(histl);
-	return (0);
+	populate_env_list(info);
+	read_history(info);
+	hsh(info, av);
+	return (EXIT_SUCCESS);
 }
