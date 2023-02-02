@@ -281,10 +281,9 @@ $ echo $NAME
 $
 ```
 
-## Authors :black_nib:
+## Author :black_nib:
 
-* Alex Yu <[AlexYu01](https://github.com/AlexYu01)>
-* Brennan D Baraban <[bdbaraban](https://github.com/bdbaraban)>
+* Chidi Cosmas (ajaerohc@gmail.com)
 
 ## License :lock:
 
